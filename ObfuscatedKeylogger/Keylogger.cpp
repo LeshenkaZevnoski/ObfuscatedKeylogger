@@ -36,7 +36,7 @@ int logKey(int _key, MemoryRegion* memRegion) {
         char* newBase = (char*)HeapReAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, memRegion->baseAddress, newSize);
         if (newBase == NULL) {
             perror("Memory reallocation failed");
-            return 1; // Error
+            return 1;
         }
         memRegion->baseAddress = newBase;
         memRegion->size = newSize;

