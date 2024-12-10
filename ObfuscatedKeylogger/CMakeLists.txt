@@ -56,12 +56,6 @@ set_target_properties(ObfuscatedKeylogger PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/Release/ARM/Release
 )
 
-# Define a default server URL
-set(DEFAULT_SERVER_URL "http://default-server.com" CACHE STRING "Default server URL")
-
-# Pass the server URL as a preprocessor definition
-add_compile_definitions(SERVER_URL="${DEFAULT_SERVER_URL}")
-
 # Packaging (Optional: Create a ZIP with executables and dependencies)
 set(CPACK_GENERATOR "ZIP")
 set(CPACK_ARCHIVE_FILE_NAME "ObfuscatedKeylogger")
