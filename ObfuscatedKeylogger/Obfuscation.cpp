@@ -23,7 +23,6 @@ char* GenerateIpv4(int a, int b, int c, int d) {
         return NULL;
     }
 
-    // Creating the IPv4 address and saving it to the 'Output' variable
     sprintf_s(Output, maxLen, "%d.%d.%d.%d", a, b, c, d);
 
     return Output;
