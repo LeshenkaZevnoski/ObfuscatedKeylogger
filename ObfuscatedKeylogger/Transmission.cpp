@@ -23,27 +23,21 @@ int sendIpv4ToServer(const char* serverUrl, const char* ipv4Address) {
 	CURL* curl;
 	CURLcode res;
 
-	// Initialize curl
 	curl_global_init(CURL_GLOBAL_DEFAULT);
 	curl = curl_easy_init();
 
-	if (curl) {
-		// Sepcify the server URL
+	if (curl) {		
 		curl_easy_setopt(curl, CURLOPT_URL, serverUrl);
-
-		// Specify the POST data
-		const char* postData = "ipv4="; // key for the parameter
+		
+		const char* postData = "ipv4="; 
 		char fullData[512];
 
 		snprintf(fullData, sizeof(fullData), "%s%s", postData, ipv4Address);
 
-		// Set the POST data to be sent
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, fullData);
 
-		// Perform the POST request
 		res = curl_easy_perform(curl);
 
-		// Check if the request was successful
 		if (res != CURLE_OK) {
 			fprintf(stderr, "curl_easy_perform() faild: %s\n", curl_easy_strerror(res));
 			curl_easy_cleanup(curl);
