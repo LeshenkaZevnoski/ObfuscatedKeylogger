@@ -36,7 +36,6 @@ def main():
     
     print("Deobfuscated Data (Hex):", keylog_data.hex())
     
-    # Optional: Try to decode as text if applicable
     try:
         print("Deobfuscated Data (Text):", keylog_data.decode('utf-8', errors='replace'))
     except UnicodeDecodeError:
