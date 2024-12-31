@@ -18,7 +18,7 @@ This project is intended for educational and research purposes only. The author 
 ### Building the Project
 1. Clone the repository:
    ```bash
-   git clone https://github.com/AlexZevnoski4060/ObfuscatedKeylogger.git
+   git clone https://github.com/LeshenkaZevnoski/ObfuscatedKeylogger.git
    cd ObfuscatedKeylogger
 2. Create a build directory
    ```bash
